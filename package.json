@@ -1,6 +1,6 @@
 {
   "name": "pms-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "node-modules autoloader for pms architecture",
   "homepage": "https://github.com/nin-jin/pms-node",
   "main": "node.env=node.jam.js",
@@ -22,5 +22,9 @@
   "dependencies": {
     "pms": "*"
   },
-  "engine": "node >= 0.4.1"
+  "engine": "node >= 0.4.1",
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/nin-jin/pms-node.git"
+  }
 }
