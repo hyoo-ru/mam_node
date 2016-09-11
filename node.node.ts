@@ -1,6 +1,6 @@
-declare var Proxy
-declare var require
+declare var Proxy : any
+declare var require : ( path : string )=> any
 
-var $node = new Proxy( {} , { get( target , field , wrapper ) {
+var $node = new Proxy( {} , { get( target : any, field : string , wrapper : any ) {
 	return require( field )
 } } )
