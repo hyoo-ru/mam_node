@@ -1,1 +1,2 @@
-var $node = {} as any
+// @ts-ignore
+var $node = $node || {}
