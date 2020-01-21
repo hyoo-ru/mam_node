@@ -25,6 +25,8 @@ var $node = new Proxy( {} as any , { get( target , name : string , wrapper ) {
 				$.$mol_exec( '.' , 'npm' , 'install' , '@types/' + name )
 			} catch {}
 
+			break
+
 		} else {
 
 			dir = parent
