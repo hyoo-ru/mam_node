@@ -4,16 +4,33 @@ interface $node {
 
 var $node = new Proxy( {} as any , { get( target , name : string , wrapper ) {
 
-	if( require( 'module' ).builtinModules.indexOf( name ) >= 0 ) return require( name )
-	
-	if( !require( 'fs' ).existsSync( `./node_modules/${ name }` ) ) {
+	const path = require( 'path' ) as typeof import( 'path' )
+	const fs = require( 'fs' ) as typeof import( 'fs' )
+	const mod = require( 'module' ) as typeof import( 'module' )
 
-		$.$mol_exec( '.' , 'npm' , 'install' , name )
-		
-		try {
-			$.$mol_exec( '.' , 'npm' , 'install' , '@types/' + name )
-		} catch {}
-		
+	if( mod.builtinModules.indexOf( name ) >= 0 ) return require( name )
+
+	let dir = path.resolve( '.' )
+	const suffix = `./node_modules/${ name }`
+	
+	while( !fs.existsSync( path.join( dir , suffix ) ) ) {
+
+		const parent = path.resolve( dir , '..' )
+
+		if( parent === dir ) {
+
+			$.$mol_exec( '.' , 'npm' , 'install' , name )
+			
+			try {
+				$.$mol_exec( '.' , 'npm' , 'install' , '@types/' + name )
+			} catch {}
+
+		} else {
+
+			dir = parent
+
+		}
+
 	}
 	
 	return require( name )
