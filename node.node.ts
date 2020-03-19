@@ -6,10 +6,12 @@ var _node_checked_types = new Set< string >()
 
 var $node = new Proxy( {} as any , { get( target , name : string , wrapper ) {
 
-	if( require( 'module' ).builtinModules.indexOf( name ) >= 0 ) return require( name )
+	const fs = require( 'fs' ) as typeof import( 'fs' )
+	const mod = require( 'module' ) as typeof import( 'module' )
 
-	const fs = require( 'fs' )
-	const deps = JSON.parse( fs.readFileSync( 'package.json' ) ).dependencies
+	if( mod.builtinModules.indexOf( name ) >= 0 ) return require( name )
+
+	const deps = JSON.parse( fs.readFileSync( 'package.json' ).toString() ).dependencies
 
 	if(!( name in deps )) {
 
