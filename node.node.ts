@@ -2,29 +2,39 @@ interface $node {
 	[key:string]: any
 }
 
-var _node_checked_types = new Set< string >()
-
 var $node = new Proxy( {} as any , { get( target , name : string , wrapper ) {
 
+	const path = require( 'path' ) as typeof import( 'path' )
 	const fs = require( 'fs' ) as typeof import( 'fs' )
 	const mod = require( 'module' ) as typeof import( 'module' )
 
 	if( mod.builtinModules.indexOf( name ) >= 0 ) return require( name )
 
-	const deps = JSON.parse( fs.readFileSync( 'package.json' ).toString() ).dependencies
+	let dir = path.resolve( '.' )
+	const suffix = `./node_modules/${ name }`
+	
+	while( !fs.existsSync( path.join( dir , suffix ) ) ) {
 
-	if(!( name in deps )) {
+		const parent = path.resolve( dir , '..' )
 
-		$.$mol_exec( '.' , 'npm' , 'install' , name )
+		if( parent === dir ) {
 
-		if( name[0] !== '@' ) {
+			$.$mol_exec( '.' , 'npm' , 'install' , name )
+			
 			try {
 				$.$mol_exec( '.' , 'npm' , 'install' , '@types/' + name )
-			} catch { }
+			} catch {}
+
+			break
+
+		} else {
+
+			dir = parent
+
 		}
 
 	}
-
+	
 	return require( name )
 
 } } ) as $node
