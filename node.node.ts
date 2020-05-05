@@ -12,6 +12,8 @@ var $node = new Proxy( {} as any , { get( target , name : string , wrapper ) {
 
 	let dir = path.resolve( '.' )
 	const suffix = `./node_modules/${ name }`
+
+	const $$ = ( $ as any )
 	
 	while( !fs.existsSync( path.join( dir , suffix ) ) ) {
 
@@ -19,10 +21,10 @@ var $node = new Proxy( {} as any , { get( target , name : string , wrapper ) {
 
 		if( parent === dir ) {
 
-			$.$mol_exec( '.' , 'npm' , 'install' , name )
+			$$.$mol_exec( '.' , 'npm' , 'install' , name )
 			
 			try {
-				$.$mol_exec( '.' , 'npm' , 'install' , '@types/' + name )
+				$$.$mol_exec( '.' , 'npm' , 'install' , '@types/' + name )
 			} catch {}
 
 			break
