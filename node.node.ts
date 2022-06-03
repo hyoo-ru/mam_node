@@ -11,6 +11,7 @@ var $node = new Proxy( { require } as any , {
 		const mod = target.require( 'module' ) as typeof import( 'module' )
 		
 		if( mod.builtinModules.indexOf( name ) >= 0 ) return target.require( name )
+		if( name[0] === '.' ) return target.require( name )
 		
 		const path = target.require( 'path' ) as typeof import( 'path' )
 		const fs = target.require( 'fs' ) as typeof import( 'fs' )
