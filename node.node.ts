@@ -27,10 +27,10 @@ var $node = new Proxy( { require } as any , {
 
 			if( parent === dir ) {
 
-				$$.$mol_exec( '.' , 'npm' , 'install' , name )
+				$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', name )
 				
 				try {
-					$$.$mol_exec( '.' , 'npm' , 'install' , '@types/' + name )
+					$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', '@types/' + name )
 				} catch {}
 
 				break
