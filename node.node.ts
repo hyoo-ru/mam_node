@@ -43,7 +43,12 @@ var $node = new Proxy( { require } as any , {
 
 		}
 		
-		return target.require( name )
+		try {
+			return target.require( name )
+		} catch( error ) {
+			$.$mol_fail_log( error )
+			return null
+		}
 
 	},
 
