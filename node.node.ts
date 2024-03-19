@@ -44,8 +44,11 @@ var $node = new Proxy( { require } as any , {
 		}
 		
 		try {
-			return target.require( name )
+			return $.$mol_wire_sync( target ).require( name )
 		} catch( error ) {
+			if( ( error as any ).code === 'ERR_REQUIRE_ESM' ) {
+				return importSync( name )
+			}
 			$.$mol_fail_log( error )
 			return null
 		}
@@ -58,6 +61,9 @@ var $node = new Proxy( { require } as any , {
 	},
 
 } ) as $node
+
+const importAsync = async ( uri: string )=> import( uri )
+const importSync = $.$mol_wire_sync( importAsync )
 
 require = ( req =>
 	Object.assign( function require( name : string ) {
