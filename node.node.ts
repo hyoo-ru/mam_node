@@ -44,7 +44,7 @@ var $node = new Proxy( { require } as any , {
 		}
 		
 		try {
-			return $.$mol_wire_sync( target ).require( name )
+			return target.require( name )
 		} catch( error ) {
 			if( ( error as any ).code === 'ERR_REQUIRE_ESM' ) {
 				const module = cache.get( name )
