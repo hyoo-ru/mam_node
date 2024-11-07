@@ -12,37 +12,20 @@ var $node = new Proxy( { require } as any , {
 		
 		if( mod.builtinModules.indexOf( name ) >= 0 ) return target.require( name )
 		if( name[0] === '.' ) return target.require( name )
+
+		try {
+			target.require.resolve( name )
+		} catch {
 		
-		const path = target.require( 'path' ) as typeof import( 'path' )
-		const fs = target.require( 'fs' ) as typeof import( 'fs' )
-
-		let dir = path.resolve( '.' )
-		const suffix = `./node_modules/${ name }`
-
-		const $$ = ( $ as any )
-		
-		while( !fs.existsSync( path.join( dir , suffix ) ) ) {
-
-			const parent = path.resolve( dir , '..' )
-
-			if( parent === dir ) {
-
-				$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', name )
-				
-				try {
-					$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', '@types/' + name )
-				} catch (e) {
-					if ($$.$mol_fail_catch(e)) {
-						$$.$mol_fail_log(e)
-					}
+			const $$ = ( $ as any )
+			$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', name )
+			
+			try {
+				$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', '@types/' + name )
+			} catch (e) {
+				if ($$.$mol_fail_catch(e)) {
+					$$.$mol_fail_log(e)
 				}
-
-				break
-
-			} else {
-
-				dir = parent
-
 			}
 
 		}
@@ -50,12 +33,15 @@ var $node = new Proxy( { require } as any , {
 		try {
 			return target.require( name )
 		} catch( error ) {
+
 			if($.$mol_fail_catch(error) && ( error as any ).code === 'ERR_REQUIRE_ESM' ) {
 				const module = cache.get( name )
 				if( module ) return module
 				throw import( name ).then( module => cache.set( name, module ) )
 			}
+			
 			$.$mol_fail_log( error )
+
 			return null
 		}
 
