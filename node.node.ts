@@ -8,10 +8,11 @@ var $node = new Proxy( { require } as any , {
 
 		if( target[ name ] ) return target[ name ]
 
-		const mod = target.require/****/( 'module' ) as typeof import/****/( 'module' )
-		
-		if( mod.builtinModules.indexOf( name ) >= 0 ) return target.require ( name )
+		if( name.startsWith( 'node:' ) ) return target.require ( name )
 		if( name[0] === '.' ) return target.require( name )
+		
+		const mod = target.require/****/( 'module' ) as typeof import/****/( 'module' )
+		if( mod.builtinModules.indexOf( name ) >= 0 ) return target.require ( name )
 
 		try {
 			target.require.resolve( name )
