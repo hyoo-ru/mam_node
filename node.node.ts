@@ -38,7 +38,10 @@ var $node = new Proxy( { require } as any , {
 			if($.$mol_fail_catch(error) && ( error as any ).code === 'ERR_REQUIRE_ESM' ) {
 				const module = cache.get( name )
 				if( module ) return module
-				throw import( name ).then( module => cache.set( name, module ) )
+                throw Object.assign(
+                    import( name ).then( module => cache.set( name, module ) ),
+                    { cause: error }
+                )
 			}
 			
 			$.$mol_fail_log( error )
