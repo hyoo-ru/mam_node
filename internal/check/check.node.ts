@@ -1,9 +1,11 @@
 namespace $ {
 
-	export function $node_internal_check(name: string, target = global) {
+	const mod = require/****/( 'module' ) as typeof import/****/( 'module' )
+	const internals = mod.builtinModules
+	
+	export function $node_internal_check(name: string) {
 		if ( name.startsWith('node:') ) return true
-		const mod = target.require/****/( 'module' ) as typeof import/****/( 'module' )
-		return mod.builtinModules.includes(name)
+		return internals.includes(name)
 	}
 
 }
