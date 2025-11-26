@@ -8,25 +8,25 @@ var $node = new Proxy( { require } as any , {
 
 		if( target[ name ] ) return target[ name ]
 
-		if( name.startsWith( 'node:' ) ) return target.require ( name )
+		const $$ = ( $ as any )
+		if( $$.$node_internal_check(name, target) ) return target.require ( name )
 		if( name[0] === '.' ) return target.require( name )
 		
-		const mod = target.require/****/( 'module' ) as typeof import/****/( 'module' )
-		if( mod.builtinModules.indexOf( name ) >= 0 ) return target.require ( name )
-
 		try {
 			target.require.resolve( name )
 		} catch {
 		
-			const $$ = ( $ as any )
-			$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', name )
-			
+			try {
+				$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', name )
+			} catch (e) {
+				if( $$.$mol_promise_like( e ) ) $$.$mol_fail_hidden( e )
+			}
+
 			try {
 				$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', '@types/' + name )
 			} catch (e) {
-				if ($$.$mol_fail_catch(e)) {
-					$$.$mol_fail_log(e)
-				}
+				if( $$.$mol_promise_like( e ) ) $$.$mol_fail_hidden( e )
+				$$.$mol_fail_log(e)
 			}
 
 		}
@@ -34,8 +34,9 @@ var $node = new Proxy( { require } as any , {
 		try {
 			return target.require( name )
 		} catch( error ) {
+			if( $$.$mol_promise_like( error ) ) $$.$mol_fail_hidden( error )
 
-			if($.$mol_fail_catch(error) && ( error as any ).code === 'ERR_REQUIRE_ESM' ) {
+			if(error && typeof error === 'object' && ( error as { code?: string } ).code === 'ERR_REQUIRE_ESM' ) {
 				const module = cache.get( name )
 				if( module ) return module
                 throw Object.assign(
@@ -44,7 +45,7 @@ var $node = new Proxy( { require } as any , {
                 )
 			}
 			
-			$.$mol_fail_log( error )
+			$$.$mol_fail_log( error )
 
 			return null
 		}
