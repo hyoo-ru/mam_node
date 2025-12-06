@@ -29,8 +29,13 @@ var $node = new Proxy( { require } as any , {
 				$$.$mol_fail_log(e)
 			}
 
+			const mam_node_modules = target.require('node:path').join(process.cwd(), 'node_modules')
+			if (! process.env.NODE_PATH?.includes(mam_node_modules)) {
+				process.env.NODE_PATH=`${mam_node_modules}${process.env.NODE_PATH ? `:${process.env.NODE_PATH}` : ''}`
+				target.require('node:module').Module._initPaths()
+			}
 		}
-		
+
 		return target.require( name )
 	},
 
