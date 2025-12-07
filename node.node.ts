@@ -2,7 +2,7 @@ interface $node {
 	[key:string]: any
 }
 
-var $node = new Proxy( { require: require/**/( 'node:module' ).createRequire( process.cwd() + '/package.json' ) } as any , {
+var $node = new Proxy( { require } as any , {
 	
 	get( target , name : string , wrapper ) {
 
