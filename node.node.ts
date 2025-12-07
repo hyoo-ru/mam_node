@@ -8,24 +8,10 @@ var $node = new Proxy( { require } as any , {
 
 		if( target[ name ] ) return target[ name ]
 
-		const $$ = ( $ as any )
-		if( $$.$node_internal_check(name, target) ) return target.require ( name )
+		if( $.$node_internal_check(name) ) return target.require ( name )
 		if( name[0] === '.' ) return target.require( name )
-		
-		try {
-			target.require.resolve( name )
-		} catch {
-		
-			$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', name )
 
-			try {
-				$$.$mol_exec( '.' , 'npm' , 'install' , '--omit=dev', '@types/' + name )
-			} catch (e) {
-				if( $$.$mol_promise_like( e ) ) $$.$mol_fail_hidden( e )
-				$$.$mol_fail_log(e)
-			}
-
-		}
+		$.$node_autoinstall(name)
 
 		return target.require( name )
 	},
@@ -36,8 +22,6 @@ var $node = new Proxy( { require } as any , {
 	},
 
 } ) as $node
-
-const cache = new Map< string, any >()
 
 require = ( req =>
 	Object.assign( function require( name : string ) {
